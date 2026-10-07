@@ -8,7 +8,7 @@ import (
 	"errors"
 
 	"github.com/hashicorp/go-version"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceUser() *schema.Resource {
@@ -38,7 +38,7 @@ func resourceUser() *schema.Resource {
 			"plaintext_password": {
 				Type:      schema.TypeString,
 				Optional:  true,
-				Sensitive:     true,
+				Sensitive: true,
 			},
 
 			"password": {
@@ -214,12 +214,11 @@ func ReadUser(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	stmtSQL := fmt.Sprintf("SELECT USER FROM mysql.user WHERE USER='%s'",
-		d.Get("user").(string))
+	stmtSQL := "SELECT USER FROM mysql.user WHERE USER = ?"
 
 	log.Println("Executing statement:", stmtSQL)
 
-	rows, err := db.Query(stmtSQL)
+	rows, err := db.Query(stmtSQL, d.Get("user").(string))
 	if err != nil {
 		return err
 	}

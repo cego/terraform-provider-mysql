@@ -6,8 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/hashicorp/go-version"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/encryption"
-	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 func resourceUserPassword() *schema.Resource {
@@ -57,11 +56,11 @@ func SetUserPassword(d *schema.ResourceData, meta interface{}) error {
 
 	password := uuid.String()
 	pgpKey := d.Get("pgp_key").(string)
-	encryptionKey, err := encryption.RetrieveGPGKey(pgpKey)
+	encryptionKey, err := retrieveGPGKey(pgpKey)
 	if err != nil {
 		return err
 	}
-	fingerprint, encrypted, err := encryption.EncryptValue(encryptionKey, password, "MySQL Password")
+	fingerprint, encrypted, err := encryptValue(encryptionKey, password, "MySQL Password")
 	if err != nil {
 		return err
 	}
