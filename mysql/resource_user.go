@@ -214,12 +214,11 @@ func ReadUser(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	stmtSQL := fmt.Sprintf("SELECT USER FROM mysql.user WHERE USER='%s'",
-		d.Get("user").(string))
+	stmtSQL := "SELECT USER FROM mysql.user WHERE USER = ?"
 
 	log.Println("Executing statement:", stmtSQL)
 
-	rows, err := db.Query(stmtSQL)
+	rows, err := db.Query(stmtSQL, d.Get("user").(string))
 	if err != nil {
 		return err
 	}
